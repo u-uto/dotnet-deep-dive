@@ -55,48 +55,57 @@ int? score = null;
 ## よく使う値型
 
 `int`
-
 最もよく使う整数型です。
 
 ```csharp
 int count = 100;
 ```
 
+
 `bool`
+真偽値です。
 
 ```csharp
 bool isActive = true;
 ```
 
-真偽値です。
 
 `char`
+1文字を表します。
+
 ```csharp
 char c = 'A';
 ```
 
-1文字を表します。
 
 `decimal`
-```csharp
-decimal price = 1200.50m;
-```
 金額計算でよく使います。
 浮動小数点誤差を避けたい場面で有効です。
 
+```csharp
+decimal price = 1200.50m;
+```
+
+
 `DateTime`
+日時を表します。
+
 ```csharp
 DateTime now = DateTime.Now;
 ```
-日時を表します。
+
 
 `TimeSpan`
+時間差を表します。
+
 ```csharp
 TimeSpan duration = TimeSpan.FromMinutes(30);
 ```
-時間差を表します。
+
 
 `struct`
+struct は自分で定義できる値型です。
+
 ```csharp
 public struct Point
 {
@@ -112,8 +121,8 @@ p2.X = 10;
 //このとき p1 と p2 は別の値です。
 //p2.X を変えても p1.X は変わりません。
 ```
-struct は自分で定義できる値型です。
 
+---
 
 ## 値型を使うときの考え方
 
