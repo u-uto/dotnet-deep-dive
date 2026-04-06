@@ -162,7 +162,7 @@ static void Update(int x)
 int value = 10;
 Update(value);
 
-Consol.Writeline(value);
+Console.Writeline(value);
 //結果 10
 
 ```
@@ -179,7 +179,7 @@ static void Update(ref int x)
 int value = 10;
 Update(value);
 
-Consol.Writeline(value);
+Console.Writeline(value);
 //結果 999
 ```
 
