@@ -63,7 +63,6 @@ int? score = null;
 値型を object や interface 型として扱うと、boxing が発生する場合があります。
 性能やメモリに影響することがあります。
 
-
 ---
 
 ## 代表例
@@ -164,12 +163,6 @@ p2.X = 10;
 - 変更を複数箇所で反映したい
 - 複雑なライフサイクル管理が必要
 
-
-
-
-
-
-
 ---
 
 ## 注意点
@@ -200,15 +193,53 @@ null を許容するのか、しないのかを設計段階で決める必要が
 
 ---
 
+## 実装例
 
+### 値型の代入
+```csharp
+int a = 10;
+int b = a;
 
+b = 20;
 
+Console.WriteLine(a); // 10
+Console.WriteLine(b); // 20
+//結果 10
 
+```
 
+### 自作 struct
+```csharp
+public struct Point
+{
+    public int X;
+    public int Y;
+}
 
-## 値型とメソッド
+Point p1 = new Point { X = 1, Y = 2 };
+Point p2 = p1;
 
-値型をメソッドに渡すと、基本的にはコピーされます。
+p2.X = 10;
+
+Console.WriteLine(p1.X); // 1
+Console.WriteLine(p2.X); // 10
+```
+
+### nullable 値型
+```csharp
+int? score = null;
+
+if (score.HasValue)
+{
+    Console.WriteLine(score.Value);
+}
+else
+{
+    Console.WriteLine("score is null");
+}
+```
+
+### メソッドに渡した場合
 ```csharp
 static void Update(int x)
 {
@@ -218,14 +249,10 @@ static void Update(int x)
 int value = 10;
 Update(value);
 
-Console.Writeline(value);
-//結果 10
-
+Console.WriteLine(value); // 10
 ```
 
-この場合、value は変わりません。
-参照渡しにしたい場合は ref を使います。
-
+### ref で渡した場合
 ```csharp
 static void Update(ref int x)
 {
@@ -233,30 +260,46 @@ static void Update(ref int x)
 }
 
 int value = 10;
-Update(value);
+Update(ref value);
 
-Console.Writeline(value);
-//結果 999
+Console.WriteLine(value); // 999
 ```
 
 ---
 
-## 値型の設計で意識すること
+## 設計指針
+値型を設計するときは、次の点を意識します。
 - 小さく保つ
-- 不変にできるなら不変にする
-- 変更の影響範囲を理解する
-- null が必要なら T? を明示する
-- 比較やコピーの意味を明確にする
+- 意味が明確な単位にする
+- コピーされても安全であることを前提にする
+- null が必要なら T? を使う
+- 比較の意味を明確にする
+- 大きく複雑なものは無理に struct にしない
+- 共有状態を持たせたいなら参照型を検討する
+
+特に struct は、軽い値の表現に向いています。
+業務ロジックの中心概念を何でも struct にするのは避けたほうがよいです。
+
+## 判断基準
+次の問いに答えると、値型を選ぶべきか判断しやすくなります。
+これは値そのものか
+
+- コピーされても問題ないか
+- 参照を共有する必要があるか
+- null を許容する必要があるか
+- 比較は値ベースでよいか
+- サイズが小さいか
+- 頻繁にコピーされても問題ないか
+
+これらに「はい」と言えるなら、値型は有力な選択肢です。
+逆に、共有や変更の伝播が重要なら参照型を検討します。
 
 ---
 
-## 実務での判断基準
+## まとめ
 
-次のように考えると整理しやすいです。
-- これは値そのものか
-- コピーされても問題ないか
-- 参照を共有したいか
-- null を持つ必要があるか
-- 比較は値比較でよいか
+値型は、値そのものを保持する型です。
+コピーされること、null をそのまま持てないこと、boxing が起きることなどに特徴があります。
 
-この問いに答えられると、値型の選択が安定します。
+値型を正しく理解すると、null の扱い、比較、メソッド引数、性能面の判断が安定します。
+C# の型設計の土台になる重要な概念です。
