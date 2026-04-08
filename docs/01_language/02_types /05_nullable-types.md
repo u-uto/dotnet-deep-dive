@@ -109,6 +109,8 @@ string? name = null;
 int? length = name?.Length;
 ```
 
+---
+
 使いどころ
 
 nullable は、次のような場面で使います。
