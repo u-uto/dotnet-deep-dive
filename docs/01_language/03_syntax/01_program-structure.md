@@ -327,22 +327,6 @@ internal class Program
 
 ---
 
-## サンプルの方針
-
-`src/samples/` では、次のようなサンプルを用意するとよいです。
-
-```text
-src/samples/syntax/01_program-structure/
-├─ top-level-statements/
-├─ main-method/
-├─ file-scoped-namespace/
-└─ multi-class-structure/
-```
-
-各サンプルは、1テーマを 1 つの小さな `.cs` ファイルで示すと分かりやすいです。
-
----
-
 ## まとめ
 
 このファイルでは、C# プログラムの基本構造を整理しました。  
@@ -353,5 +337,3 @@ src/samples/syntax/01_program-structure/
 - `namespace`、`class`、`using` は構造の土台になる
 - 実務では、処理の入口と責務分割を見える形で書くことが大切
 - この理解は、後続の `types/`、`generics/`、`oop/`、`async-await/` の基礎になる
-
-次は `02_identifiers.md` に進み、C# の名前の付け方を整理します。
