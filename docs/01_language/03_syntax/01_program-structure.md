@@ -1,5 +1,5 @@
-# 01_program-structure
-## プログラム構造
+# プログラム構造
+01_program-structure
 
 ## 概要
 
