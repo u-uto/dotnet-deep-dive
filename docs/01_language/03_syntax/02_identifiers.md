@@ -1,5 +1,4 @@
-# 識別子
-02_identifiers
+# 02_identifiers  ：識別子
 
 ## 概要
 
