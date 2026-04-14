@@ -107,81 +107,190 @@ object o = i; // Boxing発生（ヒープへのコピー）
 
 ---
 
-## 代表例
+## コード例
 
-`int`
+### 単純型 (Simple Types)
 
-最もよく使う整数型です。
-
-```csharp
-int count = 100;
-```
-
-
-`bool`
-
-真偽値です。
+C# がキーワードとして提供している基本的な構造体型です。  
+コード上ではリテラルをそのまま書けます。
 
 ```csharp
+int count = 10;
+long total = 1000L;
+double rate = 0.25;
 bool isActive = true;
+char grade = 'A';
 ```
 
-
-`char`
-
-1文字を表します。
+`int` のような型は、.NET では `System.Int32` に対応しています。
 
 ```csharp
-char c = 'A';
+System.Int32 number = 42;
+int sameNumber = 42;
 ```
 
+---
 
-`decimal`
+### ユーザー定義構造体 (Custom Structs)
 
-金額計算でよく使います。
-浮動小数点誤差を避けたい場面で有効です。
-
-```csharp
-decimal price = 1200.50m;
-```
-
-
-`DateTime`
-
-日時を表します。
-
-```csharp
-DateTime now = DateTime.Now;
-```
-
-
-`TimeSpan`
-
-時間差を表します。
-
-```csharp
-TimeSpan duration = TimeSpan.FromMinutes(30);
-```
-
-
-`struct`
-
-自分で定義できる値型です。
+`struct` を使って独自の値型を定義できます。  
+小さくて、値として扱いたいデータに向いています。
 
 ```csharp
 public struct Point
 {
     public int X;
     public int Y;
-}
 
-Point p1 = new Point { X = 1, Y = 2 };
+    public Point(int x, int y)
+    {
+        X = x;
+        Y = y;
+    }
+}
+```
+
+使用例:
+
+```csharp
+Point p1 = new Point(1, 2);
 Point p2 = p1;
 
 p2.X = 10;
 
-//このとき p1 と p2 は別の値です。
-//p2.X を変えても p1.X は変わりません。
+Console.WriteLine(p1.X); // 1
+Console.WriteLine(p2.X); // 10
+```
+
+---
+
+### タプル型 (Tuple Types)
+
+複数の値をまとめて一時的に返したいときに便利です。  
+戻り値として使うと、意味のある名前付きで受け取れます。
+
+```csharp
+(int id, string name) person = (1, "Alice");
+
+Console.WriteLine(person.id);
+Console.WriteLine(person.name);
+```
+
+メソッドの戻り値として使う例:
+
+```csharp
+static (int min, int max) GetRange()
+{
+    return (1, 100);
+}
+
+var range = GetRange();
+Console.WriteLine(range.min);
+Console.WriteLine(range.max);
+```
+
+---
+
+### null 許容値型 (Nullable Value Types)
+
+本来 null を持てない値型に、null を持たせるための型です。  
+内部的には `System.Nullable<T>` を使っています。
+
+```csharp
+int? score = null;
+bool? isReady = true;
+```
+
+値があるかどうかを確認する例:
+
+```csharp
+int? score = 10;
+
+if (score.HasValue)
+{
+    Console.WriteLine(score.Value);
+}
+else
+{
+    Console.WriteLine("null");
+}
+```
+
+`??` を使って既定値を与える例:
+
+```csharp
+int? score = null;
+int result = score ?? 0;
+
+Console.WriteLine(result);
+```
+
+---
+
+### 列挙型 (Enumeration Types)
+
+意味のある名前を持った定数の集合です。  
+状態や種別を分かりやすく表せます。
+
+```csharp
+public enum Season
+{
+    Spring,
+    Summer,
+    Fall,
+    Winter
+}
+```
+
+使用例:
+
+```csharp
+Season season = Season.Summer;
+
+if (season == Season.Summer)
+{
+    Console.WriteLine("夏です");
+}
+```
+
+内部的には整数として扱われるため、明示的に変換することもできます。
+
+```csharp
+Season season = Season.Winter;
+int value = (int)season;
+
+Console.WriteLine(value); // 3
+```
+
+---
+
+### フラグとしての enum
+
+複数の状態を組み合わせたい場合は `[Flags]` を使います。
+
+```csharp
+[Flags]
+public enum Permission
+{
+    None    = 0,
+    Read    = 1,
+    Write   = 2,
+    Execute = 4
+}
+```
+
+使用例:
+
+```csharp
+Permission permission = Permission.Read | Permission.Write;
+
+bool canRead = (permission & Permission.Read) != 0;
+bool canWrite = (permission & Permission.Write) != 0;
+bool canExecute = (permission & Permission.Execute) != 0;
+
+Console.WriteLine(canRead);    // True
+Console.WriteLine(canWrite);   // True
+Console.WriteLine(canExecute); // False
 ```
 
 ---
@@ -232,80 +341,6 @@ null を許容するのか、しないのかを設計段階で決める必要が
 
 「値型にしたいから struct にする」という判断は危険です。
 サイズ、変更頻度、利用方法を踏まえて選ぶ必要があります。
-
----
-
-## 実装例
-
-### 値型の代入
-```csharp
-int a = 10;
-int b = a;
-
-b = 20;
-
-Console.WriteLine(a); // 10
-Console.WriteLine(b); // 20
-//結果 10
-
-```
-
-### 自作 struct
-```csharp
-public struct Point
-{
-    public int X;
-    public int Y;
-}
-
-Point p1 = new Point { X = 1, Y = 2 };
-Point p2 = p1;
-
-p2.X = 10;
-
-Console.WriteLine(p1.X); // 1
-Console.WriteLine(p2.X); // 10
-```
-
-### nullable 値型
-```csharp
-int? score = null;
-
-if (score.HasValue)
-{
-    Console.WriteLine(score.Value);
-}
-else
-{
-    Console.WriteLine("score is null");
-}
-```
-
-### メソッドに渡した場合
-```csharp
-static void Update(int x)
-{
-    x = 999;
-}
-
-int value = 10;
-Update(value);
-
-Console.WriteLine(value); // 10
-```
-
-### ref で渡した場合
-```csharp
-static void Update(ref int x)
-{
-    x = 999;
-}
-
-int value = 10;
-Update(ref value);
-
-Console.WriteLine(value); // 999
-```
 
 ---
 
