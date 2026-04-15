@@ -342,7 +342,46 @@ Console.WriteLine(myPoint.X); // 結果: 10 (直接書き換わっている)
 #### 対策
 * ジェネリクス <T> を活用し、型を保ったまま扱う
 
+**Bad** 
 ```csharp
+// object型を受け取るため、intを渡すとボックス化が発生する
+void PrintObject(object value)
+{
+    Console.WriteLine(value.ToString());
+}
+
+int score = 100;
+PrintObject(score); // 実行時にスタックからヒープへコピーされる
+
+```
+**Good** 
+```csharp
+// ジェネリクスを使うと、intのままメソッド内に持ち込める
+void PrintGeneric<T>(T value)
+{
+    // valueがintの場合、int.ToString() が直接呼ばれる
+    Console.WriteLine(value?.ToString());
+}
+
+int score = 100;
+PrintGeneric(score); // ボックス化なし（型が保たれる）
+
+```
+
+* 文字列補完を利用
+
+**Bad** 
+```csharp
+int score = 100;
+// string.Concat(object, object) が呼ばれ、内部で int が object に変換される
+Console.WriteLine("Score: " + score); 
+
+```
+**Good** 
+```csharp
+int score = 100;
+// 文字列補間を使用すると、内部的に最適な処理が行われボックス化を回避できる
+Console.WriteLine($"Score: {score}"); 
 
 ```
 
@@ -355,20 +394,23 @@ Console.WriteLine(myPoint.X); // 結果: 10 (直接書き換わっている)
 
 * 構造体の合計サイズが(一般的に)32バイトを超える場合はclassとして定義します。
 
+**Bad** 
 ```csharp
+// 160バイト（16byte * 10）の巨大な構造体
+public struct LargeStruct { public decimal V1, V2, V3, V4, V5, V6, V7, V8, V9, V10; }
+
+// 呼ぶたびに 160バイトがコピーされ、CPUキャッシュを圧迫する
+void Process(LargeStruct data) { /* ... */ }
 
 ```
 
-### 4. == 演算子と Equals の挙動
-
-構造体はデフォルトでは == 演算子が使えない場合が多く、
-Equals メソッドは内部で「リフレクション」という重い処理を使うため低速
-
-### 対策
-* 構造体を定義する際は、IEquatable<T> を実装し、== と != 演算子をオーバーロードする
-
+**Good** 
 ```csharp
+// 対策1: 32バイトを超えるなら class（参照型）にする
+public class LargeData { /* ... */ }
 
+// 対策2: 構造体のまま 'in' 引数（読み取り専用参照渡し）を使い、コピーを防ぐ
+void Process(in LargeStruct data) { /* ... */ }
 ```
 
 ---
