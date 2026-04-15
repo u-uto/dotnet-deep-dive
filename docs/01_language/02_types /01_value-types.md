@@ -308,7 +308,7 @@ Console.WriteLine(canExecute); // False
 * readonlyを使用して不変(Immutable)として定義する
 * refを利用して参照する
 
-* **Bad**
+**Bad**
 ```csharp
 void Move(Point p) {
     p.X += 10; // 引数の時点でコピーされているため、この変更は呼び出し元に伝わらない
@@ -320,7 +320,7 @@ Console.WriteLine(myPoint.X); // 結果: 0 (更新されていない！)
 
 ```
 
-* **Good**
+**Good**
 
 ```csharp
 // 対策1: 戻り値で受け取る（推奨）
