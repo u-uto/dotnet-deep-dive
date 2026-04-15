@@ -304,9 +304,44 @@ Console.WriteLine(canExecute); // False
 値型はコピーされるため、変更が元へ伝わりません。
 「更新したのに反映されない」ように見えることがあります。
 
-#### 対策
-* readonlyを使用して不変(Immutable)として定義する
-* refを利用して参照する
+#### 対策1: readonlyを使用して不変(Immutable)として定義する
+**Bad**
+```csharp
+public struct MutablePoint { public int X; }
+
+void Process() {
+    var p = new MutablePoint { X = 10 };
+    
+    // プロパティから取得した瞬間に「コピー」が作られる
+    var copyP = p; 
+    copyP.X = 99; // コピーを書き換えただけ
+    
+    Console.WriteLine(p.X); // 結果: 10 (元は変わっていない)
+    // 💡 「あれ？99にしたはずなのに反映されていない」という事故が起きる
+}
+
+```
+
+**Good**
+
+```csharp
+// 型自体を readonly にして、外部からの書き換えを禁止する
+public readonly struct ImmutablePoint {
+    public int X { get; init; }
+    public ImmutablePoint(int x) => X = x;
+}
+
+void Process() {
+    readonly var p = new ImmutablePoint(10);
+    
+    // p.X = 99; // コンパイルエラーになるため、事故が起きない
+    
+    // 値を変えたい場合は「新しいインスタンス」を代入し直す
+    var newP = new ImmutablePoint(99); 
+    Console.WriteLine(newP.X); // 結果: 99
+}
+```
+#### 対策2: refを利用して参照する
 
 **Bad**
 ```csharp
@@ -323,17 +358,16 @@ Console.WriteLine(myPoint.X); // 結果: 0 (更新されていない！)
 **Good**
 
 ```csharp
-// 対策1: 戻り値で受け取る（推奨）
-Point Move(Point p) => new Point(p.X + 10, p.Y);
-
-// 対策2: ref を使い「参照（場所）」を渡す（高度な最適化）
-void Move(ref Point p) {
-    p.X += 10;
+// ref を付けることで、コピーではなく「変数の場所（参照）」を渡す
+void Offset(ref Point p) {
+    p.X += 10; // 呼び出し元の実体を直接書き換える
 }
 
 Point myPoint = new Point(0, 0);
-Move(ref myPoint); 
-Console.WriteLine(myPoint.X); // 結果: 10 (直接書き換わっている)
+// 呼び出し側も ref を明示する必要がある（「書き換わる可能性がある」という合図）
+Offset(ref myPoint); 
+
+Console.WriteLine(myPoint.X); // 結果: 10 (正しく更新されている)
 ```
 
 ### 2. ボックス化（Boxing）によるパフォーマンス劣化
@@ -389,9 +423,7 @@ Console.WriteLine($"Score: {score}");
 値型は基本的に引数に渡すたびに全データがコピーされます。
 構造体の中に多くのプロパティを持たせると、メソッド呼び出しのたびにメモリのコピーが発生し、逆に動作が重くなります。
 
-#### 対策
-
-* 構造体の合計サイズが(一般的に)32バイトを超える場合はclassとして定義します。
+#### 対策1: 構造体の合計サイズが(一般的に)32バイトを超える場合は、classとして定義します。
 
 **Bad** 
 ```csharp
