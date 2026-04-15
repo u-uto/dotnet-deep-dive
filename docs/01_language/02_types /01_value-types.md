@@ -46,17 +46,6 @@ C# では、コピーの挙動、null の扱い、比較の考え方、パフォ
 ### 1. 値のコピー(Copy by Value)
 値型は、別の変数に代入したときに値がコピーされます。
 
-```csharp
-int a = 10;
-//a->b
-int b = a;
-
-b = 20;
-
-Console.WritLine(a)　//10
-Console.WritLine(b)　//20
-```
-
 * メリット
     * 変更の影響が完全に局所化されるため、マルチスレッド環境や複雑なロジック内でも副作用を気にせず安全に扱える。
 
@@ -77,12 +66,6 @@ Console.WritLine(b)　//20
 通常の値型は null を持ちません。
 ただし、Nullable<T> または T? を使うことで null を許容できます。
 
-```csharp
-int score = null; // コンパイルエラー
-int? nullableScore = null; // Nullable型ならOK
-
-```
-
 * メリット
     * **NullReferenceException の回避:** null チェックをせずに安心して計算や処理に利用できる
 
@@ -93,11 +76,6 @@ int? nullableScore = null; // Nullable型ならOK
 ### 4. ボクシング (Boxing)
 
 値型を object 型やインターフェース型として扱う際、一時的にヒープ領域へ移動する現象です。
-
-```csharp
-int i = 123;
-object o = i; // Boxing発生（ヒープへのコピー）
-```
 
 * メリット
     * **汎用性:** 抽象的な型（object や interface）として扱えるため、汎用的なロジックに組み込める
