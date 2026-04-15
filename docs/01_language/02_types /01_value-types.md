@@ -308,8 +308,32 @@ Console.WriteLine(canExecute); // False
 * readonlyを使用して不変(Immutable)として定義する
 * refを利用して参照する
 
+* **Bad**
 ```csharp
+void Move(Point p) {
+    p.X += 10; // 引数の時点でコピーされているため、この変更は呼び出し元に伝わらない
+}
 
+Point myPoint = new Point(0, 0);
+Move(myPoint);
+Console.WriteLine(myPoint.X); // 結果: 0 (更新されていない！)
+
+```
+
+* **Good**
+
+```csharp
+// 対策1: 戻り値で受け取る（推奨）
+Point Move(Point p) => new Point(p.X + 10, p.Y);
+
+// 対策2: ref を使い「参照（場所）」を渡す（高度な最適化）
+void Move(ref Point p) {
+    p.X += 10;
+}
+
+Point myPoint = new Point(0, 0);
+Move(ref myPoint); 
+Console.WriteLine(myPoint.X); // 結果: 10 (直接書き換わっている)
 ```
 
 ### 2. ボックス化（Boxing）によるパフォーマンス劣化
