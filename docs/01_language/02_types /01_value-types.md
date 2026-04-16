@@ -312,7 +312,7 @@ public readonly struct ImmutablePoint {
 }
 
 void Process() {
-    readonly var p = new ImmutablePoint(10);
+    var p = new ImmutablePoint(10);
     
     // p.X = 99; // コンパイルエラーになるため、事故が起きない
     
