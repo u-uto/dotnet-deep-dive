@@ -439,8 +439,7 @@ void Process(in LargeStruct data) { /* ... */ }
 * 値としての性質（Value Object）: 
 IDで識別する必要がなく、中身が同じなら同じとみなせるもの（例：座標、金額、期間）。
 
-* 不変性（Immutability）: 
-
+* 不変性（Immutability）:  
 「一部を書き換える」のではなく、「新しい値に差し替える」運用が自然なもの。
 
 * 軽量性: 
